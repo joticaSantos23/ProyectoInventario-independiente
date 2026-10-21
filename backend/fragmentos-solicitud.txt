@@ -1,0 +1,41 @@
+﻿
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:205:                  <strong>Stock:</strong>
+> C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:206:                  {{ item.stock }} {{ item.unidadMedida || 
+'unidad' }}
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:207:                </span>
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:208:              </div>
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:230:              <label>
+> C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:231:                Cantidad ({{ item.unidadMedida || 'unidad' }})
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:232:              </label>
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:233:
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:957:        producto: item.producto,
+> C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:958:        cantidad: Number(
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:959:          item.cantidad || 1,
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:960:        ),
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:972:
+> C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:973:        unidadMedida: item.unidadMedida || 'unidad',
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:974:
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:975:        imagenUrl:
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1030:      const productosActuales =
+> C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1031:        await api.obtenerProductos()
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1032:
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1033:      productosSolicitud.value =
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1076:
+> C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1077:              unidadMedida: productoActual.unidadMedida || 
+'unidad',
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1078:
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1079:              imagenUrl:
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1435:    const productosActuales =
+> C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1436:      await api.obtenerProductos()
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1437:
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1438:    for (
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1587:
+> C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1588:            cantidad:
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1589:              Number(
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1590:                item.cantidad,
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1603:
+> C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1604:    await api.crearPrestamo(
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1605:      prestamo,
+  C:\Users\User\Downloads\ProyectoInventario\frontend\src\pages\aprendiz\SolicitarPrestamoPage.vue:1606:    )
+
+
