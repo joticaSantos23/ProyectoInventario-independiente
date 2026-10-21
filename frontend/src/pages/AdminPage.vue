@@ -50,7 +50,7 @@ const cargarCategoriasInventario = async () => {
   } catch (error) {
     $q.notify({
       type: 'negative',
-      message: error.message || 'No fue posible cargar las categorías.',
+      message: error.message || 'No fue posible cargar las categorÃ­as.',
       position: 'top-right',
       timeout: 3500,
     })
@@ -62,6 +62,9 @@ const estadisticas = ref({
   productosPrestados: 0,
   productosStockBajo: 0,
   productosSinStock: 0,
+  productosDanados: 0,
+  productosRetirados: 0,
+  productosRequierenAtencion: 0,
 })
 
 const porcentajeDisponibles = computed(() => {
@@ -104,6 +107,15 @@ const porcentajeSinStock = computed(() => {
   )
 })
 
+const porcentajeRequierenAtencion = computed(() => {
+  if (!estadisticas.value.totalProductos) return 0
+
+  return Math.round(
+    (estadisticas.value.productosRequierenAtencion /
+      estadisticas.value.totalProductos) * 100,
+  )
+})
+
 const cargarDashboard = async () => {
   cargando.value = true
 
@@ -117,6 +129,9 @@ const cargarDashboard = async () => {
       productosPrestados: resumen.productosPrestados ?? 0,
       productosStockBajo: resumen.productosStockBajo ?? 0,
       productosSinStock: resumen.productosSinStock ?? 0,
+      productosDanados: resumen.productosDanados ?? 0,
+      productosRetirados: resumen.productosRetirados ?? 0,
+      productosRequierenAtencion: resumen.productosRequierenAtencion ?? 0,
       
     }
   } catch (error) {
@@ -196,7 +211,7 @@ onMounted(() => {
         />
 
         <span>
-          Cargando información del inventario...
+          Cargando informaciÃ³n del inventario...
         </span>
       </div>
 
@@ -354,15 +369,15 @@ onMounted(() => {
 
               <div class="stat-info">
                 <span class="stat-label">
-                  Sin stock
+                  Requieren atención
                 </span>
 
                 <strong>
-                  {{ estadisticas.productosSinStock }}
+                  {{ estadisticas.productosRequierenAtencion }}
                 </strong>
 
                 <small>
-                  {{ porcentajeSinStock }}% del inventario
+                  {{ porcentajeRequierenAtencion }}% del inventario
                 </small>
               </div>
 
@@ -393,7 +408,7 @@ onMounted(() => {
                   </div>
 
                   <div class="card-subtitle">
-                    Distribución actual de los productos
+                    DistribuciÃ³n actual de los productos
                   </div>
                 </div>
 
@@ -501,6 +516,48 @@ onMounted(() => {
 
                   </div>
 
+                  <!-- DANADOS -->
+                  <div class="bar-item">
+                    <div class="bar-info">
+                      <span>
+                        <i class="legend-dot dot-orange"></i>
+                        Dañados
+                      </span>
+                      <strong>{{ estadisticas.productosDanados }}</strong>
+                    </div>
+
+                    <q-linear-progress
+                      :value="estadisticas.totalProductos
+                        ? estadisticas.productosDanados / estadisticas.totalProductos
+                        : 0"
+                      rounded
+                      size="9px"
+                      color="orange"
+                      track-color="grey-3"
+                    />
+                  </div>
+
+                  <!-- RETIRADOS -->
+                  <div class="bar-item">
+                    <div class="bar-info">
+                      <span>
+                        <i class="legend-dot dot-red"></i>
+                        Retirados
+                      </span>
+                      <strong>{{ estadisticas.productosRetirados }}</strong>
+                    </div>
+
+                    <q-linear-progress
+                      :value="estadisticas.totalProductos
+                        ? estadisticas.productosRetirados / estadisticas.totalProductos
+                        : 0"
+                      rounded
+                      size="9px"
+                      color="negative"
+                      track-color="grey-3"
+                    />
+                  </div>
+
                   <!-- SIN STOCK -->
                   <div class="bar-item">
 
@@ -535,7 +592,7 @@ onMounted(() => {
           </q-card>
 
         
-          <!-- CATEGORÍAS DEL INVENTARIO -->
+          <!-- CATEGORÃAS DEL INVENTARIO -->
           <q-card
             flat
             bordered
@@ -545,11 +602,11 @@ onMounted(() => {
               <div class="card-header">
                 <div>
                   <div class="card-title">
-                    Categorías del inventario
+                    CategorÃ­as del inventario
                   </div>
 
                   <div class="card-subtitle">
-                    Cantidad de objetos por categoría
+                    Cantidad de objetos por categorÃ­a
                   </div>
                 </div>
 
@@ -610,7 +667,7 @@ onMounted(() => {
                   size="32px"
                 />
 
-                <div>No hay categorías para mostrar.</div>
+                <div>No hay categorÃ­as para mostrar.</div>
               </div>
             </q-card-section>
           </q-card>
@@ -696,7 +753,7 @@ onMounted(() => {
 }
 
 /* ============================= */
-/* ESTADÍSTICAS */
+/* ESTADÃSTICAS */
 /* ============================= */
 
 .stats-grid {
@@ -804,7 +861,7 @@ onMounted(() => {
 }
 
 
-/* CATEGORÍAS DEL INVENTARIO */
+/* CATEGORÃAS DEL INVENTARIO */
 .categorias-header-icon {
   width: 42px;
   height: 42px;
@@ -1021,7 +1078,7 @@ onMounted(() => {
 }
 
 /* ============================= */
-/* ATENCIÓN */
+/* ATENCIÃ“N */
 /* ============================= */
 
 .attention-list {
@@ -1086,7 +1143,7 @@ onMounted(() => {
 }
 
 /* ============================= */
-/* ACCIONES RÁPIDAS */
+/* ACCIONES RÃPIDAS */
 /* ============================= */
 
 .quick-card {

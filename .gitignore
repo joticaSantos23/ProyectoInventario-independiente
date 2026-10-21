@@ -26,3 +26,8 @@ build/
 # Archivos temporales
 *.tmp
 *.temp
+# Recuperacion temporal de administrador
+backend/restablecer-admin-temporal.js
+
+# Inicializacion temporal de la base independiente
+backend/inicializarBaseNueva.temporal.js

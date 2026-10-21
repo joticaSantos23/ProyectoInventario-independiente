@@ -111,7 +111,7 @@
 
             <q-img
               v-if="props.row.imagenUrl"
-              :src="props.row.imagenUrl"
+              :src="resolverUrlImagen(props.row.imagenUrl)"
               width="55px"
               height="55px"
               fit="contain"
@@ -497,19 +497,49 @@
                 />
               </div>
 
-              <!-- IMAGEN -->
-              <div class="col-12 col-md-8">
-                <q-input
-                  v-model="nuevoProducto.imagenUrl"
-                  outlined
-                  label="URL de imagen"
-                  placeholder="https://ejemplo.com/imagen.jpg"
-                  :disable="guardandoProducto"
-                >
-                  <template #prepend>
-                    <q-icon name="image" />
-                  </template>
-                </q-input>
+              <!-- IMAGEN: URL, archivo local o cámara del teléfono -->
+              <div class="col-12">
+                <div class="text-subtitle2 q-mb-sm">Imagen del producto</div>
+                <div class="row q-col-gutter-sm items-center">
+                  <div class="col-12 col-md-7">
+                    <q-input
+                      v-model="nuevoProducto.imagenUrl"
+                      outlined
+                      label="URL de imagen (opcional)"
+                      placeholder="https://ejemplo.com/imagen.jpg"
+                      :disable="guardandoProducto || Boolean(archivoImagenSeleccionado)"
+                    >
+                      <template #prepend><q-icon name="link" /></template>
+                    </q-input>
+                  </div>
+                  <div class="col-12 col-md-5 row q-gutter-sm">
+                    <q-btn
+                      outline color="primary" icon="upload_file" label="Elegir imagen"
+                      :disable="guardandoProducto" @click="$refs.archivoImagenInput.click()"
+                    />
+                    <q-btn
+                      outline color="secondary" icon="photo_camera" label="Tomar foto"
+                      :disable="guardandoProducto" @click="$refs.camaraImagenInput.click()"
+                    />
+                  </div>
+                </div>
+                <input
+                  ref="archivoImagenInput" type="file" accept="image/jpeg,image/png,image/webp"
+                  class="imagen-input-oculto" @change="seleccionarImagen"
+                />
+                <input
+                  ref="camaraImagenInput" type="file" accept="image/*" capture="environment"
+                  class="imagen-input-oculto" @change="seleccionarImagen"
+                />
+                <div v-if="imagenPreview || nuevoProducto.imagenUrl" class="row items-center q-gutter-md q-mt-sm">
+                  <img :src="imagenPreview || resolverUrlImagen(nuevoProducto.imagenUrl)" alt="Vista previa de la imagen del producto" class="imagen-vista-previa" />
+                  <div class="column q-gutter-xs">
+                    <span class="text-caption">{{ archivoImagenSeleccionado?.name || 'Imagen actual' }}</span>
+                    <q-btn v-if="archivoImagenSeleccionado" flat dense color="negative" icon="close" label="Quitar selección" :disable="guardandoProducto" @click="limpiarImagenSeleccionada" />
+                    <q-btn v-else-if="nuevoProducto.imagenUrl.startsWith('/productos/')" flat dense color="negative" icon="delete_outline" label="Quitar imagen guardada" :disable="guardandoProducto" @click="quitarImagenGuardada" />
+                  </div>
+                </div>
+                <div class="text-caption text-grey-7 q-mt-xs">JPG, PNG o WEBP. La imagen se optimiza y guarda en la base de datos para conservarse después de los despliegues.</div>
               </div>
 
             </div>
@@ -648,9 +678,78 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { useQuasar } from 'quasar'
-import api from '../services/api'
+import api, { resolverUrlImagen } from '../services/api'
 
 const $q = useQuasar()
+
+const archivoImagenSeleccionado = ref(null)
+const imagenPreview = ref('')
+
+const limpiarImagenSeleccionada = () => {
+  if (imagenPreview.value.startsWith('blob:')) URL.revokeObjectURL(imagenPreview.value)
+  imagenPreview.value = ''
+  archivoImagenSeleccionado.value = null
+  if (typeof document !== 'undefined') {
+    document.querySelectorAll('.imagen-input-oculto').forEach((input) => { input.value = '' })
+  }
+}
+
+const seleccionarImagen = (evento) => {
+  const archivo = evento.target.files?.[0]
+  if (!archivo) return
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(archivo.type)) {
+    $q.notify({ type: 'warning', message: 'Selecciona una imagen JPG, PNG o WEBP.' })
+    evento.target.value = ''
+    return
+  }
+  if (archivo.size > 12 * 1024 * 1024) {
+    $q.notify({ type: 'warning', message: 'La imagen original debe pesar menos de 12 MB.' })
+    evento.target.value = ''
+    return
+  }
+  limpiarImagenSeleccionada()
+  archivoImagenSeleccionado.value = archivo
+  imagenPreview.value = URL.createObjectURL(archivo)
+}
+
+const convertirImagenOptimizada = (archivo) => new Promise((resolve, reject) => {
+  const lector = new FileReader()
+  lector.onerror = () => reject(new Error('No fue posible leer la imagen seleccionada.'))
+  lector.onload = () => {
+    const imagen = new Image()
+    imagen.onerror = () => reject(new Error('El archivo seleccionado no es una imagen válida.'))
+    imagen.onload = () => {
+      const maximo = 1400
+      const escala = Math.min(1, maximo / Math.max(imagen.width, imagen.height))
+      const canvas = document.createElement('canvas')
+      canvas.width = Math.max(1, Math.round(imagen.width * escala))
+      canvas.height = Math.max(1, Math.round(imagen.height * escala))
+      const contexto = canvas.getContext('2d')
+      if (!contexto) return reject(new Error('No fue posible optimizar la imagen.'))
+      contexto.drawImage(imagen, 0, 0, canvas.width, canvas.height)
+      const resultado = canvas.toDataURL('image/jpeg', 0.82)
+      const bytes = Math.ceil((resultado.length - resultado.indexOf(',') - 1) * 3 / 4)
+      if (bytes > 2 * 1024 * 1024) return reject(new Error('La imagen optimizada supera 2 MB. Elige una imagen más pequeña.'))
+      resolve(resultado)
+    }
+    imagen.src = lector.result
+  }
+  lector.readAsDataURL(archivo)
+})
+
+const quitarImagenGuardada = async () => {
+  if (!modoEdicion.value || !productoEditandoId.value) {
+    nuevoProducto.imagenUrl = ''
+    return
+  }
+  try {
+    await api.eliminarImagenProducto(productoEditandoId.value)
+    nuevoProducto.imagenUrl = ''
+    $q.notify({ type: 'positive', message: 'Imagen eliminada.' })
+  } catch (error) {
+    $q.notify({ type: 'negative', message: error.message || 'No fue posible quitar la imagen.' })
+  }
+}
 
 const productos = ref([])
 const cargando = ref(false)
@@ -792,6 +891,7 @@ const cargarCategorias = async () => {
 // ============================================
 
 const limpiarFormulario = () => {
+  limpiarImagenSeleccionada()
   Object.assign(
     nuevoProducto,
     crearProductoVacio(),
@@ -956,27 +1056,27 @@ const guardarProducto = async () => {
 
   try {
 
+    let productoGuardado
     if (modoEdicion.value) {
-
-      await api.actualizarProducto(
+      productoGuardado = await api.actualizarProducto(
         productoEditandoId.value,
         datosProducto,
       )
-
-      $q.notify({
-        type: 'positive',
-        message: 'Producto actualizado correctamente.',
-      })
-
     } else {
-
-      await api.crearProducto(datosProducto)
-
-      $q.notify({
-        type: 'positive',
-        message: 'Producto creado correctamente.',
-      })
+      productoGuardado = await api.crearProducto(datosProducto)
     }
+
+    if (archivoImagenSeleccionado.value) {
+      const imagenOptimizada = await convertirImagenOptimizada(archivoImagenSeleccionado.value)
+      await api.subirImagenProducto(productoGuardado._id, imagenOptimizada)
+    }
+
+    $q.notify({
+      type: 'positive',
+      message: modoEdicion.value
+        ? 'Producto actualizado correctamente.'
+        : 'Producto creado correctamente.',
+    })
 
     dialogoProducto.value = false
 
@@ -1444,4 +1544,18 @@ onMounted(() => {
     padding: 14px 18px;
   }
 }
+
+.imagen-input-oculto {
+  display: none;
+}
+
+.imagen-vista-previa {
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+  border: 1px solid #dce3ed;
+  border-radius: 10px;
+  background: #fff;
+}
+
 </style>

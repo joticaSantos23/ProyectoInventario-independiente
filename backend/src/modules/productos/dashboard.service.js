@@ -1,4 +1,4 @@
-import Producto from "./producto.model.js";
+﻿import Producto from "./producto.model.js";
 
 const obtenerResumenDashboard = async () => {
   const productos = await Producto.find();
@@ -23,12 +23,30 @@ const obtenerResumenDashboard = async () => {
     (producto) => producto.stock === 0
   ).length;
 
+  const productosDanados = productos.filter(
+    (producto) => producto.estado === "Dañado"
+  ).length;
+
+  const productosRetirados = productos.filter(
+    (producto) => producto.estado === "Retirado"
+  ).length;
+
+  const productosRequierenAtencion = productos.filter(
+    (producto) =>
+      producto.stock === 0 ||
+      producto.estado === "Dañado" ||
+      producto.estado === "Retirado"
+  ).length;
+
   return {
     totalProductos,
     productosDisponibles,
     productosPrestados,
     productosStockBajo,
-    productosSinStock
+    productosSinStock,
+    productosDanados,
+    productosRetirados,
+    productosRequierenAtencion
   };
 };
 

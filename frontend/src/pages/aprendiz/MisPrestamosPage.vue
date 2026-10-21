@@ -187,7 +187,7 @@
               <div class="producto-image">
                 <img
                   v-if="obtenerImagenProducto(item)"
-                  :src="obtenerImagenProducto(item)"
+                  :src="resolverUrlImagen(obtenerImagenProducto(item))"
                   :alt="obtenerNombreProducto(item)"
                 />
 
@@ -438,7 +438,7 @@
 <script setup>
 import { computed, onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
-import api from '../../services/api'
+import api, { resolverUrlImagen } from '../../services/api'
 
 const router = useRouter()
 

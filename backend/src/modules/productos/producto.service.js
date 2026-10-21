@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import Producto from "./producto.model.js";
 import Movimiento from "../movimientos/movimiento.model.js";
 import Prestamo from "../prestamos/prestamo.model.js";
+import ProductoImagen from "./producto-imagen.model.js";
 
 const crearProducto = async (datos) => {
   const {
@@ -260,6 +261,7 @@ const eliminarProducto = async (id) => {
   // Si el producto ya no está en préstamos abiertos, elimina también sus
   // movimientos para no dejar registros huérfanos en el historial.
   const movimientosEliminados = await Movimiento.deleteMany({ producto: id });
+  await ProductoImagen.deleteOne({ producto: id });
   await Producto.findByIdAndDelete(id);
 
   return {

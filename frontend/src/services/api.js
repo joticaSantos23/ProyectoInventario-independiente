@@ -1,4 +1,11 @@
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+
+export const resolverUrlImagen = (url) => {
+  if (!url) return ''
+  if (/^(data:|https?:\/\/|blob:)/i.test(url)) return url
+  const base = API_URL.replace(/\/$/, '')
+  return `${base}${url.startsWith('/') ? url : `/${url}`}`
+}
 const obtenerToken = () => {
   return sessionStorage.getItem('token')
 }
@@ -116,6 +123,32 @@ const crearProducto = async (producto) => {
   }
 
   return datos.producto
+}
+
+const subirImagenProducto = async (id, imagen) => {
+  const respuesta = await fetch(`${API_URL}/productos/${id}/imagen`, {
+    method: 'PUT',
+    headers: obtenerHeaders(),
+    body: JSON.stringify({ imagen }),
+  })
+
+  const datos = await leerRespuesta(respuesta)
+  if (!respuesta.ok) {
+    throw new Error(datos.mensaje || 'No fue posible guardar la imagen.')
+  }
+  return datos
+}
+
+const eliminarImagenProducto = async (id) => {
+  const respuesta = await fetch(`${API_URL}/productos/${id}/imagen`, {
+    method: 'DELETE',
+    headers: obtenerHeaders(),
+  })
+  const datos = await leerRespuesta(respuesta)
+  if (!respuesta.ok) {
+    throw new Error(datos.mensaje || 'No fue posible eliminar la imagen.')
+  }
+  return datos
 }
 
 const actualizarProducto = async (id, producto) => {
@@ -581,6 +614,8 @@ export default {
   obtenerProductoPorId,
   crearProducto,
   actualizarProducto,
+  subirImagenProducto,
+  eliminarImagenProducto,
   eliminarProducto,
 
   // Categorías

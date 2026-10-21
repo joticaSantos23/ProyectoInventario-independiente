@@ -345,7 +345,7 @@
 
           <img
             v-if="producto.imagenUrl"
-            :src="producto.imagenUrl"
+            :src="resolverUrlImagen(producto.imagenUrl)"
             :alt="producto.nombre"
             class="product-image"
           />
@@ -534,7 +534,7 @@
 
           <img
             v-if="productoSeleccionado.imagenUrl"
-            :src="productoSeleccionado.imagenUrl"
+            :src="resolverUrlImagen(productoSeleccionado.imagenUrl)"
             :alt="productoSeleccionado.nombre"
             class="modal-image"
           />
@@ -884,7 +884,7 @@ import {
 
 import { useRouter } from 'vue-router'
 
-import api from '../../services/api'
+import api, { resolverUrlImagen } from '../../services/api'
 
 
 const router = useRouter()

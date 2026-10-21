@@ -175,7 +175,7 @@
             <div class="producto-imagen">
               <img
                 v-if="item.imagenUrl"
-                :src="item.imagenUrl"
+                :src="resolverUrlImagen(item.imagenUrl)"
                 :alt="item.nombre"
               />
 
@@ -781,7 +781,7 @@ import {
 
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
-import api from '../../services/api'
+import api, { resolverUrlImagen } from '../../services/api'
 
 const router = useRouter()
 const $q = useQuasar()

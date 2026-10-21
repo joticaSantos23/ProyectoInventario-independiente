@@ -5,6 +5,22 @@ import verificarRol from "../../middlewares/verificarRol.js";
 
 const router = express.Router();
 
+// Las imágenes se guardan en MongoDB para que sobrevivan a reinicios y despliegues.
+// La lectura es pública para que el navegador pueda renderizar <img> sin exponer tokens.
+router.get("/:id/imagen", productoController.obtenerImagen);
+router.put(
+  "/:id/imagen",
+  verificarToken,
+  verificarRol("admin"),
+  productoController.guardarImagen
+);
+router.delete(
+  "/:id/imagen",
+  verificarToken,
+  verificarRol("admin"),
+  productoController.eliminarImagen
+);
+
 // Consultar productos
 router.get(
   "/",

@@ -48,10 +48,6 @@ const ingresar = async () => {
 
     sessionStorage.setItem('token', datos.token)
     sessionStorage.setItem('usuario', JSON.stringify(datos.usuario))
-    console.log('DATOS LOGIN:', datos)
-console.log('TOKEN RECIBIDO:', datos.token)
-console.log('TOKEN GUARDADO:', sessionStorage.getItem('token'))
-console.log('USUARIO GUARDADO:', sessionStorage.getItem('usuario'))
 
     $q.notify({
       type: 'positive',
