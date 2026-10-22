@@ -12,12 +12,13 @@ const itemPrestamoSchema = new mongoose.Schema(
         cantidad: {
       type: Number,
       required: [true, "La cantidad es obligatoria"],
-      min: [0.000001, "La cantidad debe ser mayor que cero"]
+      min: [0.000001, "La cantidad debe ser mayor que cero"],
     },
 
    cantidadSolicitada: {
   type: Number,
-  min: [0.000001, "La cantidad solicitada debe ser mayor que cero"],
+  min: [1, "La cantidad solicitada debe ser un entero mayor que cero"],
+  validate: { validator: (valor) => valor == null || Number.isInteger(valor), message: "La cantidad solicitada debe ser un número entero" },
   default: null
 },
 

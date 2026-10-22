@@ -50,7 +50,7 @@ const cargarCategoriasInventario = async () => {
   } catch (error) {
     $q.notify({
       type: 'negative',
-      message: error.message || 'No fue posible cargar las categorÃ­as.',
+      message: error.message || 'No fue posible cargar las categorías.',
       position: 'top-right',
       timeout: 3500,
     })
@@ -146,9 +146,17 @@ const cargarDashboard = async () => {
   }
 }
 
-const irAProductos = () => {
-  router.push('/admin/productos')
+const irAProductos = (filtro = '') => {
+  router.push({
+    path: '/admin/productos',
+    query: filtro ? { filtro } : {},
+  })
 }
+
+const irADisponibles = () => irAProductos('disponibles')
+const irAPrestados = () => irAProductos('prestados')
+const irAStockBajo = () => irAProductos('stockBajo')
+const irARequierenAtencion = () => irAProductos('atencion')
 
 const irACategorias = () => {
   router.push('/admin/categorias')
@@ -211,7 +219,7 @@ onMounted(() => {
         />
 
         <span>
-          Cargando informaciÃ³n del inventario...
+          Cargando información del inventario...
         </span>
       </div>
 
@@ -228,7 +236,7 @@ onMounted(() => {
           <q-card
             flat
             bordered
-            class="stat-card stat-card-blue"
+            class="stat-card stat-card-blue clickable-card" role="button" tabindex="0" @click="irAProductos()" @keyup.enter="irAProductos()"
           >
             <q-card-section>
 
@@ -260,7 +268,7 @@ onMounted(() => {
           <q-card
             flat
             bordered
-            class="stat-card stat-card-green"
+            class="stat-card stat-card-green clickable-card" role="button" tabindex="0" @click="irADisponibles" @keyup.enter="irADisponibles"
           >
             <q-card-section>
 
@@ -292,7 +300,7 @@ onMounted(() => {
           <q-card
             flat
             bordered
-            class="stat-card stat-card-orange"
+            class="stat-card stat-card-orange clickable-card" role="button" tabindex="0" @click="irAPrestados" @keyup.enter="irAPrestados"
           >
             <q-card-section>
 
@@ -324,7 +332,7 @@ onMounted(() => {
           <q-card
             flat
             bordered
-            class="stat-card stat-card-yellow"
+            class="stat-card stat-card-yellow clickable-card" role="button" tabindex="0" @click="irAStockBajo" @keyup.enter="irAStockBajo"
           >
             <q-card-section>
 
@@ -356,7 +364,7 @@ onMounted(() => {
           <q-card
             flat
             bordered
-            class="stat-card stat-card-red"
+            class="stat-card stat-card-red clickable-card" role="button" tabindex="0" @click="irARequierenAtencion" @keyup.enter="irARequierenAtencion"
           >
             <q-card-section>
 
@@ -408,7 +416,7 @@ onMounted(() => {
                   </div>
 
                   <div class="card-subtitle">
-                    DistribuciÃ³n actual de los productos
+                    Distribución actual de los productos
                   </div>
                 </div>
 
@@ -592,7 +600,7 @@ onMounted(() => {
           </q-card>
 
         
-          <!-- CATEGORÃAS DEL INVENTARIO -->
+          <!-- CATEGORÍAS DEL INVENTARIO -->
           <q-card
             flat
             bordered
@@ -602,11 +610,11 @@ onMounted(() => {
               <div class="card-header">
                 <div>
                   <div class="card-title">
-                    CategorÃ­as del inventario
+                    Categorías del inventario
                   </div>
 
                   <div class="card-subtitle">
-                    Cantidad de objetos por categorÃ­a
+                    Cantidad de objetos por categoría
                   </div>
                 </div>
 
@@ -667,7 +675,7 @@ onMounted(() => {
                   size="32px"
                 />
 
-                <div>No hay categorÃ­as para mostrar.</div>
+                <div>No hay categorías para mostrar.</div>
               </div>
             </q-card-section>
           </q-card>
@@ -753,7 +761,7 @@ onMounted(() => {
 }
 
 /* ============================= */
-/* ESTADÃSTICAS */
+/* ESTADÍSTICAS */
 /* ============================= */
 
 .stats-grid {
@@ -861,7 +869,7 @@ onMounted(() => {
 }
 
 
-/* CATEGORÃAS DEL INVENTARIO */
+/* CATEGORÍAS DEL INVENTARIO */
 .categorias-header-icon {
   width: 42px;
   height: 42px;
@@ -1078,7 +1086,7 @@ onMounted(() => {
 }
 
 /* ============================= */
-/* ATENCIÃ“N */
+/* ATENCIÓN */
 /* ============================= */
 
 .attention-list {
@@ -1143,7 +1151,7 @@ onMounted(() => {
 }
 
 /* ============================= */
-/* ACCIONES RÃPIDAS */
+/* ACCIONES RÁPIDAS */
 /* ============================= */
 
 .quick-card {
@@ -1229,4 +1237,9 @@ onMounted(() => {
     gap: 18px;
   }
 }
+</style>
+
+<style scoped>
+.clickable-card { cursor: pointer; transition: transform .15s ease, box-shadow .15s ease; }
+.clickable-card:hover, .clickable-card:focus-visible { transform: translateY(-2px); box-shadow: 0 5px 18px rgba(0,0,0,.10); outline: none; }
 </style>

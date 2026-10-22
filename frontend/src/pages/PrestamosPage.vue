@@ -378,12 +378,12 @@
                   v-model.number="item.cantidad"
                   outlined
                   type="number"
-                  min="0.001"
-                  step="0.001"
+                  min="1"
+                  step="1"
                   :label="`Cantidad (${unidadProducto(item.producto)}) *`"
                   :disable="procesando"
                   :rules="[
-                    v => Number.isFinite(Number(v)) && Number(v) > 0 || 'Ingresa una cantidad positiva',
+                    v => Number.isInteger(Number(v)) && Number(v) > 0 || 'Ingresa una cantidad entera positiva',
                     v => Number(v) <= stockDisponible(item.producto) || `Existencias disponibles: ${stockDisponible(item.producto)}`
                   ]"
                 />

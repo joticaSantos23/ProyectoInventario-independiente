@@ -91,7 +91,7 @@ const crearProducto = async (datos) => {
 };
 
 const obtenerProductos = async (filtros = {}) => {
-  const { buscar, categoria, estado } = filtros;
+  const { buscar, categoria, estado, filtro } = filtros;
 
   const condiciones = {};
 
@@ -124,9 +124,23 @@ const obtenerProductos = async (filtros = {}) => {
     condiciones.estado = estado;
   }
 
-  return await Producto.find(condiciones)
+  let productos = await Producto.find(condiciones)
     .populate("categoria", "nombre")
     .sort({ createdAt: -1 });
+
+  if (filtro === "stockBajo") {
+    productos = productos.filter(
+      (producto) => Number(producto.stock) > 0 &&
+        Number(producto.stock) <= Number(producto.stockMinimo)
+    );
+  } else if (filtro === "atencion") {
+    productos = productos.filter(
+      (producto) => Number(producto.stock) <= 0 ||
+        ["Dañado", "Retirado"].includes(producto.estado)
+    );
+  }
+
+  return productos;
 };
 
 const obtenerProductoPorId = async (id) => {

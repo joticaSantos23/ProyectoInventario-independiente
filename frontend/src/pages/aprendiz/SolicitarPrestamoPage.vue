@@ -238,7 +238,7 @@
                   :disabled="
                     item.productoNoEncontrado ||
                     item.stock <= 0 ||
-                    item.cantidad <= 0.001
+                    item.cantidad < 1
                   "
                   @click="disminuirCantidad(item)"
                 >
@@ -250,8 +250,8 @@
                 <input
                   v-model.number="item.cantidad"
                   type="number"
-                  min="0.001"
-                  step="0.001"
+                  min="1"
+                  step="1"
                   :max="item.stock"
                   :disabled="
                     item.productoNoEncontrado ||
@@ -1133,7 +1133,7 @@ const cargarProductosSolicitud =
           // Mantener una cantidad positiva.
 
           if (Number(item.cantidad) <= 0) {
-            item.cantidad = Math.min(1, stock)
+            item.cantidad = Math.min(1, Math.floor(stock))
           }
         },
       )
@@ -1247,8 +1247,8 @@ const corregirCantidad = (item) => {
   const stock =
     Number(item.stock)
 
-  if (!Number.isFinite(cantidad) || cantidad <= 0) {
-    cantidad = Math.min(1, stock)
+  if (!Number.isInteger(cantidad) || cantidad <= 0) {
+    cantidad = Math.min(1, Math.floor(stock))
   }
 
   if (
@@ -1258,10 +1258,10 @@ const corregirCantidad = (item) => {
     cantidad = 0
 
   } else if (
-    cantidad > stock
+    cantidad > Math.floor(stock)
   ) {
 
-    cantidad = stock
+    cantidad = Math.floor(stock)
 
     $q.notify({
       type: 'warning',
@@ -1350,10 +1350,10 @@ const validarProductos = () => {
       Number(item.stock)
 
     if (
-      !Number.isFinite(cantidad) ||
+      !Number.isInteger(cantidad) ||
       cantidad <= 0
     ) {
-      return `La cantidad de ${item.nombre} debe ser un número positivo.`
+      return `La cantidad de ${item.nombre} debe ser un número entero positivo.`
     }
 
     if (

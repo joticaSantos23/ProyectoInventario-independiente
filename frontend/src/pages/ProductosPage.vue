@@ -676,11 +676,13 @@
 </template>
 
 <script setup>
-import { onMounted, reactive, ref } from 'vue'
+import { onMounted, reactive, ref, watch } from 'vue'
+import { useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 import api, { resolverUrlImagen } from '../services/api'
 
 const $q = useQuasar()
+const route = useRoute()
 
 const archivoImagenSeleccionado = ref(null)
 const imagenPreview = ref('')
@@ -757,6 +759,7 @@ const cargando = ref(false)
 const filtros = reactive({
   buscar: '',
   estado: '',
+  filtro: '',
 })
 
 const estados = [
@@ -1116,6 +1119,7 @@ const cargarProductos = async () => {
     productos.value = await api.obtenerProductos({
       buscar: filtros.buscar,
       estado: filtros.estado,
+      filtro: filtros.filtro,
     })
 
   } catch (error) {
@@ -1248,8 +1252,23 @@ const colorEstado = (estado) => {
   }
 }
 
+const aplicarFiltroDeRuta = () => {
+  const filtro = String(route.query.filtro || '')
+  filtros.filtro = ''
+  filtros.estado = ''
+  if (filtro === 'disponibles') filtros.estado = 'Disponible'
+  else if (filtro === 'prestados') filtros.estado = 'Prestado'
+  else if (filtro === 'stockBajo' || filtro === 'atencion') filtros.filtro = filtro
+}
+
 onMounted(() => {
+  aplicarFiltroDeRuta()
   cargarProductos()
+})
+
+watch(() => route.query.filtro, async () => {
+  aplicarFiltroDeRuta()
+  await cargarProductos()
 })
 </script>
 

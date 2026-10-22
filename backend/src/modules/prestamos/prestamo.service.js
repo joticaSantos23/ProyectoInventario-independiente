@@ -99,9 +99,9 @@ const crearPrestamo = async (datos, usuarioId) => {
 
     const cantidad = Number(item.cantidad);
 
-    if (!Number.isFinite(cantidad) || cantidad <= 0) {
+    if (!Number.isInteger(cantidad) || cantidad <= 0) {
       throw new Error(
-        "La cantidad de cada producto debe ser un número mayor que cero"
+        "La cantidad de cada producto debe ser un número entero mayor que cero"
       );
     }
 
@@ -541,11 +541,11 @@ const productosProcesados = await Promise.all(
     const cantidadSolicitada = Number(item.cantidad);
 
     if (
-      !Number.isFinite(cantidadSolicitada) ||
+      !Number.isInteger(cantidadSolicitada) ||
       cantidadSolicitada <= 0
     ) {
       throw new Error(
-        "Las cantidades deben ser números mayores que cero"
+        "Las cantidades deben ser números enteros mayores que cero"
       );
     }
 

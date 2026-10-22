@@ -69,6 +69,10 @@ const obtenerProductos = async (filtros = {}) => {
     parametros.append('estado', filtros.estado)
   }
 
+  if (filtros.filtro) {
+    parametros.append('filtro', filtros.filtro)
+  }
+
   const queryString = parametros.toString()
 
   const respuesta = await fetch(
