@@ -440,150 +440,41 @@
       </q-card>
     </q-dialog>
 
-    <!-- DETALLE -->
-    <q-dialog v-model="dialogoDetalle">
-      <q-card class="dialogo-detalle">
-        <q-card-section class="dialogo-header">
+    <!-- VISTA PREVIA DE CONSTANCIA PDF -->
+    <q-dialog v-model="dialogoDetalle" maximized @hide="limpiarVistaPrevia">
+      <q-card class="constancia-dialogo">
+        <q-card-section class="constancia-header">
           <div>
             <div class="eyebrow">PRÉSTAMO</div>
-            <h2>Detalle de solicitud</h2>
-            <p>Información completa del préstamo seleccionado.</p>
+            <h2>Constancia de préstamo</h2>
+            <p>Vista previa del documento que puedes descargar y conservar.</p>
           </div>
-          <q-btn flat round dense icon="close" @click="dialogoDetalle = false" />
+          <q-btn flat round dense icon="close" aria-label="Cerrar vista previa" @click="dialogoDetalle = false" />
         </q-card-section>
 
         <q-separator />
 
-        <q-card-section v-if="prestamoSeleccionado" class="detalle-contenido">
-          <div class="detalle-estado">
-            <span>Estado actual</span>
-            <q-badge
-              rounded
-              class="estado-badge"
-              :color="colorEstado(prestamoSeleccionado.estado)"
-              :label="prestamoSeleccionado.estado"
-            />
-          </div>
+        <div v-if="pdfPreviewUrl" class="constancia-preview-wrap">
+          <iframe
+            class="constancia-pdf-frame"
+            :src="pdfPreviewUrl"
+            title="Vista previa de la constancia de préstamo en PDF"
+          />
+        </div>
+        <div v-else class="constancia-cargando">
+          No fue posible generar la vista previa del documento.
+        </div>
 
-          <div class="detalle-seccion">
-            <div class="detalle-titulo">
-              <q-icon name="person" />
-              Información del solicitante
-            </div>
-
-            <div class="detalle-grid">
-              <div class="detalle-item">
-                <span>Tipo de persona</span>
-                <strong>{{ tipoPersonaTexto(prestamoSeleccionado.tipoPersona) }}</strong>
-              </div>
-              <div class="detalle-item">
-                <span>Nombre</span>
-                <strong>{{ prestamoSeleccionado.nombreSolicitante || '—' }}</strong>
-              </div>
-              <div class="detalle-item">
-                <span>Identificación</span>
-                <strong>{{ prestamoSeleccionado.identificacion || '—' }}</strong>
-              </div>
-              <div class="detalle-item">
-                <span>Área / programa</span>
-                <strong>{{ prestamoSeleccionado.areaPrograma || '—' }}</strong>
-              </div>
-              <div class="detalle-item">
-                <span>Correo</span>
-                <strong>{{ prestamoSeleccionado.correo || '—' }}</strong>
-              </div>
-              <div class="detalle-item">
-                <span>Teléfono</span>
-                <strong>{{ prestamoSeleccionado.telefono || '—' }}</strong>
-              </div>
-              <div class="detalle-item">
-                <span>Lugar de entrega</span>
-                <strong>{{ prestamoSeleccionado.lugarEntrega || '—' }}</strong>
-              </div>
-            </div>
-          </div>
-
-          <q-separator />
-
-          <div class="detalle-seccion">
-            <div class="detalle-titulo">
-              <q-icon name="event" />
-              Fechas
-            </div>
-
-            <div class="detalle-grid">
-              <div class="detalle-item">
-                <span>Fecha de solicitud</span>
-                <strong>{{ formatearFecha(prestamoSeleccionado.fechaSolicitud || prestamoSeleccionado.createdAt) }}</strong>
-              </div>
-              <div class="detalle-item">
-                <span>Devolución prevista</span>
-                <strong>{{ formatearFecha(prestamoSeleccionado.fechaDevolucionPrevista) }}</strong>
-              </div>
-              <div class="detalle-item">
-                <span>Fecha de aprobación</span>
-                <strong>{{ formatearFecha(prestamoSeleccionado.fechaAprobacion) }}</strong>
-              </div>
-              <div class="detalle-item">
-                <span>Fecha de entrega</span>
-                <strong>{{ formatearFecha(prestamoSeleccionado.fechaEntrega) }}</strong>
-              </div>
-              <div class="detalle-item">
-                <span>Devolución real</span>
-                <strong>{{ formatearFecha(prestamoSeleccionado.fechaDevolucionReal) }}</strong>
-              </div>
-            </div>
-          </div>
-
-          <q-separator />
-
-          <div class="detalle-seccion">
-            <div class="detalle-titulo">
-              <q-icon name="inventory_2" />
-              Productos solicitados
-            </div>
-
-            <div class="productos-detalle">
-              <div
-                v-for="item in prestamoSeleccionado.productos || []"
-                :key="item.producto?._id || item._id"
-                class="producto-detalle"
-              >
-                <div class="producto-icono">
-                  <q-icon name="inventory_2" size="22px" />
-                </div>
-                <div class="producto-info">
-                  <strong>{{ item.producto?.nombre || 'Producto no disponible' }}</strong>
-                  <span>Código: {{ item.producto?.codigo || '—' }}</span>
-                  <span v-if="item.producto?.marca">Marca: {{ item.producto.marca }}</span>
-                </div>
-                <div class="producto-cantidad">
-                  <span>Cantidad</span>
-                  <strong>{{ item.cantidad }}</strong>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div v-if="prestamoSeleccionado.observaciones" class="detalle-seccion">
-            <div class="detalle-titulo">
-              <q-icon name="notes" />
-              Observaciones
-            </div>
-            <div class="observaciones">{{ prestamoSeleccionado.observaciones }}</div>
-          </div>
-
-          <div v-if="prestamoSeleccionado.motivoRechazo" class="detalle-seccion rechazo-info">
-            <div class="detalle-titulo">
-              <q-icon name="info" />
-              Motivo del rechazo
-            </div>
-            <div class="observaciones">{{ prestamoSeleccionado.motivoRechazo }}</div>
-          </div>
-        </q-card-section>
-
-        <q-card-actions align="right">
+        <q-separator />
+        <q-card-actions align="right" class="constancia-acciones">
           <q-btn flat color="grey-7" label="Cerrar" @click="dialogoDetalle = false" />
+          <q-btn
+            color="primary"
+            icon="download"
+            label="Descargar constancia PDF"
+            :disable="!prestamoSeleccionado"
+            @click="descargarConstanciaPDF"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -755,6 +646,7 @@ const filtroEstado = ref(null)
 
 const dialogoDetalle = ref(false)
 const prestamoSeleccionado = ref(null)
+const pdfPreviewUrl = ref('')
 const dialogoRechazo = ref(false)
 const prestamoARechazar = ref(null)
 const motivoRechazo = ref('')
@@ -1061,10 +953,190 @@ const formatearFecha = fecha => {
   }).format(convertida)
 }
 
-// DETALLE
+// CONSTANCIA PDF DE PRÉSTAMO
+const crearConstanciaPDFBlob = prestamo => {
+  if (!prestamo) return null
+
+  const escapar = texto => String(texto ?? '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\(/g, '\\(')
+    .replace(/\)/g, '\\)')
+
+  const winAnsi = texto => {
+    const mapa = {
+      '€': 128, '‚': 130, 'ƒ': 131, '„': 132, '…': 133,
+      '†': 134, '‡': 135, 'ˆ': 136, '‰': 137, 'Š': 138,
+      '‹': 139, 'Œ': 140, 'Ž': 142, '‘': 145, '’': 146,
+      '“': 147, '”': 148, '•': 149, '–': 150, '—': 151,
+      '˜': 152, '™': 153, 'š': 154, '›': 155, 'œ': 156,
+      'ž': 158, 'Ÿ': 159,
+    }
+    const normalizado = String(texto ?? '')
+      .replace(/[\u2018\u2019]/g, "'")
+      .replace(/[\u201C\u201D]/g, '"')
+      .replace(/[\u2013\u2014]/g, '-')
+    return new Uint8Array([...normalizado].map(caracter => {
+      const codigo = caracter.codePointAt(0)
+      return codigo <= 255 ? codigo : (mapa[caracter] ?? 63)
+    }))
+  }
+
+  const limitar = (texto, maximo) => {
+    const valor = String(texto ?? '')
+    return valor.length > maximo ? `${valor.slice(0, maximo - 3)}...` : valor
+  }
+  const textoPDF = (x, y, tamano, texto, color = '0.12 0.18 0.28', fuente = 'F1') =>
+    `BT /${fuente} ${tamano} Tf ${color} rg 1 0 0 1 ${x} ${y} Tm (${escapar(texto)}) Tj ET\n`
+  const rectangulo = (x, y, ancho, alto, color) => `${color} rg ${x} ${y} ${ancho} ${alto} re f\n`
+  const linea = (x1, y1, x2, y2, color = '0.86 0.89 0.93') => `${color} RG ${x1} ${y1} m ${x2} ${y2} l S\n`
+  const fechaDocumento = formatearFecha(new Date())
+  const idPrestamo = String(prestamo._id || '').slice(-10).toUpperCase() || 'SIN ID'
+  const productos = Array.isArray(prestamo.productos) ? prestamo.productos : []
+  const filasPorPagina = 15
+  const paginas = []
+  for (let i = 0; i < Math.max(productos.length, 1); i += filasPorPagina) {
+    paginas.push(productos.slice(i, i + filasPorPagina))
+  }
+
+  const objetos = []
+  const offsets = [0]
+  const pushObj = contenido => { objetos.push(contenido); return objetos.length }
+  const fontId = pushObj('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>')
+  const boldFontId = pushObj('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>')
+  const pageIds = []
+  const contentIds = []
+
+  paginas.forEach((itemsPagina, indicePagina) => {
+    let contenido = ''
+    contenido += rectangulo(42, 750, 511, 75, '0.08 0.17 0.34')
+    contenido += rectangulo(42, 750, 6, 75, '0.20 0.43 0.82')
+    contenido += textoPDF(60, 797, 16, 'CONSTANCIA DE PRESTAMO DE EQUIPOS', '1 1 1', 'F2')
+    contenido += textoPDF(60, 775, 9, `Solicitante: ${limitar(prestamo.nombreSolicitante || 'No registrado', 48)}`, '0.91 0.94 0.99')
+    contenido += textoPDF(425, 775, 9, `No. ${idPrestamo}`, '0.91 0.94 0.99')
+    contenido += textoPDF(44, 730, 10, 'CONSTANCIA DE ENTREGA Y RESPONSABILIDAD', '0.12 0.18 0.28', 'F2')
+    contenido += textoPDF(44, 713, 9, `Fecha de expedicion: ${fechaDocumento}`, '0.35 0.40 0.48')
+
+    let inicioTabla = 680
+    if (indicePagina === 0) {
+      contenido += rectangulo(42, 625, 511, 69, '0.95 0.97 0.99')
+      contenido += textoPDF(52, 678, 8, `TIPO: ${limitar(tipoPersonaTexto(prestamo.tipoPersona), 22)}`, '0.12 0.25 0.48', 'F2')
+      contenido += textoPDF(52, 661, 8, `IDENTIFICACION: ${limitar(prestamo.identificacion || '-', 25)}`)
+      contenido += textoPDF(300, 678, 8, `ESTADO: ${limitar(prestamo.estado || '-', 20)}`, '0.12 0.25 0.48', 'F2')
+      contenido += textoPDF(300, 661, 8, `PROGRAMA / AREA: ${limitar(prestamo.areaPrograma || '-', 34)}`)
+      contenido += textoPDF(52, 644, 8, `CORREO: ${limitar(prestamo.correo || '-', 43)}`)
+      contenido += textoPDF(300, 644, 8, `TELEFONO: ${limitar(prestamo.telefono || '-', 25)}`)
+      contenido += textoPDF(52, 631, 8, `LUGAR DE ENTREGA: ${limitar(prestamo.lugarEntrega || '-', 62)}`)
+      contenido += textoPDF(44, 608, 8, `SOLICITUD: ${formatearFecha(prestamo.fechaSolicitud || prestamo.createdAt)}  |  ENTREGA: ${formatearFecha(prestamo.fechaEntrega)}`)
+      contenido += textoPDF(44, 594, 8, `DEVOLUCION PREVISTA: ${formatearFecha(prestamo.fechaDevolucionPrevista)}  |  DEVOLUCION REAL: ${formatearFecha(prestamo.fechaDevolucionReal)}`)
+      inicioTabla = 563
+    } else {
+      contenido += textoPDF(44, 725, 9, `No. ${idPrestamo}  |  Continuacion de productos`, '0.35 0.40 0.48')
+      inicioTabla = 694
+    }
+
+    contenido += rectangulo(42, inicioTabla - 5, 511, 22, '0.12 0.25 0.48')
+    contenido += textoPDF(50, inicioTabla + 2, 8, 'CODIGO', '1 1 1', 'F2')
+    contenido += textoPDF(112, inicioTabla + 2, 8, 'EQUIPO / DESCRIPCION', '1 1 1', 'F2')
+    contenido += textoPDF(355, inicioTabla + 2, 8, 'MARCA / MODELO', '1 1 1', 'F2')
+    contenido += textoPDF(492, inicioTabla + 2, 8, 'CANT.', '1 1 1', 'F2')
+
+    if (!itemsPagina.length) {
+      contenido += textoPDF(50, inicioTabla - 25, 9, 'No hay productos asociados a este prestamo.')
+    }
+    itemsPagina.forEach((item, indice) => {
+      const y = inicioTabla - 27 - indice * 21
+      const producto = item.producto || {}
+      contenido += rectangulo(42, y - 7, 511, 21, indice % 2 === 0 ? '0.95 0.97 0.99' : '1 1 1')
+      contenido += linea(42, y - 7, 553, y - 7)
+      contenido += textoPDF(50, y, 8, limitar(producto.codigo || '-', 10))
+      contenido += textoPDF(112, y, 8, limitar(producto.nombre || 'Producto no disponible', 34))
+      contenido += textoPDF(355, y, 8, limitar([producto.marca, producto.modelo].filter(Boolean).join(' / ') || '-', 20))
+      contenido += textoPDF(500, y, 9, String(item.cantidad ?? 0), '0.12 0.25 0.48', 'F2')
+    })
+
+    if (indicePagina === paginas.length - 1) {
+      const observaciones = limitar(prestamo.observaciones || 'Sin observaciones registradas.', 100)
+      const yObservaciones = 198
+      contenido += textoPDF(44, yObservaciones, 8, `OBSERVACIONES: ${observaciones}`, '0.35 0.40 0.48')
+      if (prestamo.motivoRechazo) {
+        contenido += textoPDF(44, yObservaciones - 14, 8, `MOTIVO: ${limitar(prestamo.motivoRechazo, 95)}`, '0.65 0.15 0.15')
+      }
+      contenido += linea(62, 112, 245, 112, '0.48 0.54 0.63')
+      contenido += linea(350, 112, 533, 112, '0.48 0.54 0.63')
+      contenido += textoPDF(87, 96, 8, 'FIRMA DE QUIEN ENTREGA', '0.12 0.25 0.48', 'F2')
+      contenido += textoPDF(384, 96, 8, 'FIRMA DEL SOLICITANTE', '0.12 0.25 0.48', 'F2')
+      contenido += textoPDF(95, 82, 7, 'Nombre y firma del responsable', '0.42 0.47 0.55')
+      contenido += textoPDF(390, 82, 7, 'Nombre y firma de quien recibe', '0.42 0.47 0.55')
+      contenido += textoPDF(44, 64, 7, 'Documento generado por el Sistema de Inventario como constancia de los equipos asociados al prestamo.', '0.35 0.40 0.48')
+    }
+
+    contenido += linea(42, 48, 553, 48)
+    contenido += textoPDF(44, 32, 8, `Sistema de inventario | Pagina ${indicePagina + 1} de ${paginas.length}`, '0.42 0.47 0.55')
+
+    const streamBytes = winAnsi(contenido)
+    contentIds.push(pushObj({ streamBytes }))
+    pageIds.push(pushObj('PAGE_PLACEHOLDER'))
+  })
+
+  const pagesId = pushObj('PAGES_PLACEHOLDER')
+  pageIds.forEach((pageId, index) => {
+    objetos[pageId - 1] = `<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 595 842] /Resources << /Font << /F1 ${fontId} 0 R /F2 ${boldFontId} 0 R >> >> /Contents ${contentIds[index]} 0 R >>`
+  })
+  objetos[pagesId - 1] = `<< /Type /Pages /Kids [${pageIds.map(id => `${id} 0 R`).join(' ')}] /Count ${pageIds.length} >>`
+  const catalogId = pushObj(`<< /Type /Catalog /Pages ${pagesId} 0 R >>`)
+  const chunks = []
+  let offset = 0
+  const addBytes = bytes => { chunks.push(bytes); offset += bytes.length }
+  const ascii = valor => new TextEncoder().encode(valor)
+  addBytes(ascii('%PDF-1.4\n%PDFGEN\n'))
+  objetos.forEach((obj, index) => {
+    offsets.push(offset)
+    if (typeof obj === 'object' && obj.streamBytes) {
+      addBytes(ascii(`${index + 1} 0 obj\n<< /Length ${obj.streamBytes.length} >>\nstream\n`))
+      addBytes(obj.streamBytes)
+      addBytes(ascii('\nendstream\nendobj\n'))
+    } else {
+      addBytes(ascii(`${index + 1} 0 obj\n${obj}\nendobj\n`))
+    }
+  })
+  const xrefOffset = offset
+  let xref = `xref\n0 ${objetos.length + 1}\n0000000000 65535 f \n`
+  for (let i = 1; i <= objetos.length; i++) xref += `${String(offsets[i]).padStart(10, '0')} 00000 n \n`
+  xref += `trailer\n<< /Size ${objetos.length + 1} /Root ${catalogId} 0 R >>\nstartxref\n${xrefOffset}\n%%EOF`
+  addBytes(ascii(xref))
+  return new Blob(chunks, { type: 'application/pdf' })
+}
+
 const verDetalle = prestamo => {
   prestamoSeleccionado.value = prestamo
+  if (pdfPreviewUrl.value) URL.revokeObjectURL(pdfPreviewUrl.value)
+  const blob = crearConstanciaPDFBlob(prestamo)
+  if (!blob) {
+    $q.notify({ type: 'negative', message: 'No fue posible generar la constancia PDF.', position: 'top-right' })
+    return
+  }
+  pdfPreviewUrl.value = URL.createObjectURL(blob)
   dialogoDetalle.value = true
+}
+
+const descargarConstanciaPDF = () => {
+  if (!prestamoSeleccionado.value) return
+  const blob = crearConstanciaPDFBlob(prestamoSeleccionado.value)
+  if (!blob) return
+  const url = URL.createObjectURL(blob)
+  const enlace = document.createElement('a')
+  const id = String(prestamoSeleccionado.value._id || 'prestamo').slice(-10)
+  enlace.href = url
+  enlace.download = `constancia-prestamo-${id}-${new Date().toISOString().slice(0, 10)}.pdf`
+  document.body.appendChild(enlace)
+  enlace.click()
+  enlace.remove()
+  window.setTimeout(() => URL.revokeObjectURL(url), 1500)
+}
+
+const limpiarVistaPrevia = () => {
+  if (pdfPreviewUrl.value) URL.revokeObjectURL(pdfPreviewUrl.value)
+  pdfPreviewUrl.value = ''
 }
 
 // APROBAR
@@ -1845,4 +1917,13 @@ onMounted(cargarPrestamos)
     flex-direction: column;
   }
 }
+
+.constancia-dialogo { display:flex; flex-direction:column; width:100%; height:100%; max-width:100% !important; border-radius:0; }
+.constancia-header { display:flex; align-items:flex-start; justify-content:space-between; gap:16px; padding:18px 24px; }
+.constancia-header h2 { margin:0; font-size:22px; color:#1d2939; }
+.constancia-header p { margin:6px 0 0; color:#667085; font-size:13px; }
+.constancia-preview-wrap { flex:1; min-height:0; padding:14px; background:#eef1f6; }
+.constancia-pdf-frame { width:100%; height:100%; min-height:360px; border:1px solid #d8dee8; border-radius:8px; background:#fff; }
+.constancia-cargando { display:flex; flex:1; align-items:center; justify-content:center; color:#667085; }
+.constancia-acciones { padding:12px 20px; }
 </style>
